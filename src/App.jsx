@@ -16,6 +16,13 @@ const App = () => {
 
   const mouseDown = (index) => (e) => {
     currentIndex = index;
+
+    const cardRef = cardRefs.current[currentIndex];
+    console.log(cardRef)
+    if (cardRef) {
+      cardRef.style.zIndex = 999;
+    }
+
     mousePosition.x = e.clientX;
     mousePosition.y = e.clientY;
 
@@ -123,7 +130,7 @@ const App = () => {
       {data.map((item, index) => (
         <div
           key={item.$id}
-          style={{ position: 'absolute', left: positions[index]?.x, top: positions[index]?.y }}
+          style={{ position: 'absolute', left: positions[index]?.x, top: positions[index]?.y, backgroundColor: item.color }}
           className='card-container'
           ref={(el) => (cardRefs.current[index] = el)}
           onMouseDown={mouseDown(index)}
