@@ -1,0 +1,12 @@
+.card{
+    background: #000;
+    color: white;
+}
+.card-container{
+    cursor:  pointer;
+}
+
+html{
+    scroll-behavior: smooth;
+    transition: all ease-in-out 3s;
+}
