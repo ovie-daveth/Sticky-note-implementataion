@@ -1,4 +1,7 @@
-
+html{
+    scroll-behavior: smooth;
+    transition: all ease-in-out 3s;
+}
 .card-container{
     cursor:  pointer;
     color: aliceblue;
@@ -14,7 +17,8 @@ textarea{
     width: 100%;
 }
 
-html{
-    scroll-behavior: smooth;
-    transition: all ease-in-out 3s;
+.heading{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

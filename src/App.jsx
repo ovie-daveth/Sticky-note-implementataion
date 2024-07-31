@@ -8,7 +8,7 @@ const App = () => {
   const [data, setData] = useState([]);
   const [positions, setPositions] = useState([]);
   const [notice, setNotice] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(null);
 
   let mousePosition = { x: 0, y: 0 };
   let currentIndex = null;
@@ -16,12 +16,6 @@ const App = () => {
 
   const mouseDown = (index) => (e) => {
     currentIndex = index;
-
-    const cardRef = cardRefs.current[currentIndex];
-    console.log(cardRef)
-    if (cardRef) {
-      cardRef.style.zIndex = 999;
-    }
 
     mousePosition.x = e.clientX;
     mousePosition.y = e.clientY;
@@ -33,7 +27,7 @@ const App = () => {
   const mouseUp = () => {
     document.removeEventListener('mousemove', mouseMove);
     document.removeEventListener('mouseup', mouseUp);
-    setNotice(true);
+    handleKeyUp("drag");
     currentIndex = null;
   };
 
@@ -114,30 +108,52 @@ const App = () => {
     }
   }, [notice, data, positions]);
 
-  const handleKeyUp = async() => {
-    setSaving(true)
+  const handleKeyUp = async(ref) => {
+    ref === "drag" ? setSaving(currentIndex) : setSaving(currentIndex)
 
     if(onKeyUpTimerRef.current){
       clearTimeout(onKeyUpTimerRef.current);
     }
     onKeyUpTimerRef.current = setTimeout(() => {
       setNotice(true)
-      setSaving(false)
+      setSaving(null)
     }, 2000);
+  }
+
+  const handleClick = (index) => {
+    currentIndex = index;
+  
+    const cardRef = cardRefs.current[currentIndex];
+    if (cardRef) {
+      cardRef.style.zIndex = 999;
+    }
+  
+    // Reset zIndex for other cards
+    cardRefs.current.forEach((cardRef, i) => {
+      if (i !== currentIndex && cardRef) {
+        cardRef.style.zIndex = 998; // Or any other value less than 999
+      }
+    });
   }
   return (
     <div>
       {data.map((item, index) => (
         <div
+        onClick={() => handleClick(index)}
           key={item.$id}
           style={{ position: 'absolute', left: positions[index]?.x, top: positions[index]?.y, backgroundColor: item.color }}
           className='card-container'
           ref={(el) => (cardRefs.current[index] = el)}
           onMouseDown={mouseDown(index)}
         >
-          <h2>{item.title}</h2>
+         <div className='heading'>
+         <h2>{item.title}</h2>
+         {
+          saving === index && <p>Loading...</p>
+         }
+         </div>
           <textarea
-          onKeyUp={handleKeyUp}
+          onKeyUp={() => handleKeyUp("")}
             className='card'
             value={item.content}
             name="content"
